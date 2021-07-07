@@ -37,32 +37,41 @@ function modifier_shinigami_flurry_of_blows_buff:OnIntervalThink()
 	local attackblur = ParticleManager:CreateParticle("particles/econ/items/juggernaut/jugg_arcana/jugg_arcana_crit_blur.vpcf", PATTACH_ABSORIGIN, self:GetParent())
 		ParticleManager:SetParticleControlEnt(attackblur, 0, self:GetParent(), PATTACH_POINT_FOLLOW, "attach_attack1", self:GetParent():GetAbsOrigin(), true)
 		ParticleManager:ReleaseParticleIndex(attackblur)
-	local nearbyUnits = FindUnitsInRadius(self:GetCaster():GetTeam(),
-									  coneOrigin,
-									  nil,
-									  self.radius,
-									  DOTA_UNIT_TARGET_TEAM_ENEMY,
-									  DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC,
-									  DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES,
-									  FIND_ANY_ORDER,
-									  false)
+	local nearbyUnits = self:GetCaster():FindEnemyUnitsInRadius(coneOrigin, self.radius, {flag = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES})
 	for _, unit in ipairs(nearbyUnits) do
 		EmitSoundOn("Hero_PhantomAssassin.Attack", unit)
 		EmitSoundOn("Hero_PhantomAssassin.Attack.Rip", unit)
 		self:GetParent():PerformAbilityAttack(unit, true, self:GetAbility())
-		local attack = ParticleManager:CreateParticle("particles/heroes/shinigami/shinigami_flurry_of_blows_blur.vpcf", PATTACH_POINT_FOLLOW, unit)
+		local attack = ParticleManager:CreateParticle("particles/heroes/shinigami/shinigami_flurry_of_blows_striek.vpcf", PATTACH_POINT_FOLLOW, unit)
 		ParticleManager:SetParticleControlEnt(attack, 0, unit, PATTACH_POINT_FOLLOW, "attach_hitloc", unit:GetAbsOrigin(), true)
+		ParticleManager:SetParticleControl(attack, 0, unit:GetAbsOrigin())
 		ParticleManager:ReleaseParticleIndex(attack)
 	end
-	if #nearbyUnits == 0 then
+	--if #nearbyUnits == 0 then
 		for i = 1, math.random(4) do
 			local randomAttackPos = coneOrigin + RandomVector(math.random(self.radius))
 			EmitSoundOnLocationWithCaster(randomAttackPos, "Hero_PhantomAssassin.Attack", self:GetParent())
-			local attack = ParticleManager:CreateParticle("particles/heroes/shinigami/shinigami_flurry_of_blows_blur.vpcf", PATTACH_ABSORIGIN, self:GetParent())
-			ParticleManager:SetParticleControl(attack, 0, randomAttackPos)
-			ParticleManager:ReleaseParticleIndex(attack)
+			local randoParticle = math.random(100)
+			if randoParticle > 0 and randoParticle <= 25 then
+				local attack = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_blink.vpcf", PATTACH_ABSORIGIN, self:GetParent())
+				ParticleManager:SetParticleControl(attack, 0, randomAttackPos)
+				ParticleManager:ReleaseParticleIndex(attack)
+			elseif randoParticle > 25 and randoParticle <= 50 then
+				local attack = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_blinkb.vpcf", PATTACH_ABSORIGIN, self:GetParent())
+				ParticleManager:SetParticleControl(attack, 0, randomAttackPos)
+				ParticleManager:ReleaseParticleIndex(attack)
+			elseif randoParticle > 50 and randoParticle <= 75 then
+				local attack = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_blinkc.vpcf", PATTACH_ABSORIGIN, self:GetParent())
+				ParticleManager:SetParticleControl(attack, 0, randomAttackPos)
+				ParticleManager:ReleaseParticleIndex(attack)
+			elseif randoParticle > 75 and randoParticle <= 100 then
+				local attack = ParticleManager:CreateParticle("particles/econ/items/phantom_assassin/phantom_assassin_arcana_elder_smith/pa_arcana_attack_crit.vpcf", PATTACH_ABSORIGIN, self:GetParent())
+				ParticleManager:SetParticleControl(attack, 0, randomAttackPos)
+				ParticleManager:ReleaseParticleIndex(attack)
+			end
+			
 		end
-	end
+	--end
 end
 
 function modifier_shinigami_flurry_of_blows_buff:CheckState()

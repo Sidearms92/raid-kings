@@ -24,13 +24,13 @@ function modifier_sylph_cyclone_buff:OnIntervalThink()
 		EmitSoundOn("Ability.Windrun", self:GetParent())
 	end
 	local casterPos = self:GetCaster():GetAbsOrigin()
-	local units = FindUnitsInRadius(self:GetCaster():GetTeam(), casterPos, nil, self.radius, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, 0, 0, false)
+	local units = self:GetCaster():FindEnemyUnitsInRadius(casterPos, self.radius, {})
 	for _,unit in pairs(units) do
 		local direction = (unit:GetAbsOrigin() - casterPos):Normalized()
 		local knockback = self:GetCaster():GetIdealSpeed() * 0.0333 * 0.6
 		local speedMult = self:GetCaster():GetIdealSpeed() / self:GetCaster():GetBaseMoveSpeed()
 		local damage = speedMult * self.base_damage * 0.0333
-		ApplyDamage( {victim = unit, attacker = self:GetCaster(), damage = damage, damage_type = DAMAGE_TYPE_MAGICAL, ability = self:GetAbility()} )
+		self:GetAbility():DealDamage(self:GetCaster(), unit, damage, {}, OVERHEAD_ALERT_BONUS_SPELL_DAMAGE)
 		if unit:HasMovementCapability() then
 			unit:SetAbsOrigin(unit:GetAbsOrigin() + direction * knockback)
 		end

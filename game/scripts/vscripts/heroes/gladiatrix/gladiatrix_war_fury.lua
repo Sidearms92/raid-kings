@@ -7,7 +7,7 @@ end
 function gladiatrix_war_fury:OnSpellStart()
 	self.vTarget = self:GetCursorPosition()
 	self.duration = self:GetSpecialValueFor("duration")
-	local dummy = CreateUnitByName( "npc_dummy_blank", self.vTarget, false, nil, nil, self:GetCaster():GetTeamNumber() )
+	local dummy = CreateUnitByName( "npc_dummy_unit", self.vTarget, false, nil, nil, self:GetCaster():GetTeamNumber() )
 	dummy:AddNewModifier(self:GetCaster(), self, "modifier_gladiatrix_war_fury_thinker", {duration = self.duration})
 end
 
@@ -17,7 +17,7 @@ modifier_gladiatrix_war_fury_thinker = class({})
 function modifier_gladiatrix_war_fury_thinker:OnCreated( kv )
 	self.aura_radius = self:GetAbility():GetSpecialValueFor( "radius" )
 	if IsServer() then
-		EmitSoundOn("Hero_LegionCommander.WarFuryShout",self:GetCaster())
+		--EmitSoundOn("Hero_LegionCommander.WarFuryShout",self:GetCaster())
 		EmitSoundOn("Hero_LegionCommander.Duel.Cast",self:GetCaster())
 		EmitSoundOn("Hero_LegionCommander.Duel",self:GetCaster())
 		
@@ -116,11 +116,7 @@ LinkLuaModifier( "modifier_gladiatrix_war_fury_buff", "heroes/gladiatrix/gladiat
 modifier_gladiatrix_war_fury_buff = class({})
 
 function modifier_gladiatrix_war_fury_buff:OnCreated()
-	self.bonusDamage = nil
-	if IsServer() then
-		self.bonusDamage = self:GetAbility():GetTalentSpecialValueFor("bonus_damage_aura")
-		SendClientSync("war_fury_bonus_damage", self.bonusDamage)
-	end
+	self.bonusDamage = self:GetAbility():GetTalentSpecialValueFor("bonus_damage_aura")
 	self.lifesteal = self:GetAbility():GetSpecialValueFor("lifesteal")
 	self.bonusArmor = self:GetAbility():GetSpecialValueFor("armor")
 end
@@ -135,9 +131,6 @@ function modifier_gladiatrix_war_fury_buff:DeclareFunctions()
 end
 
 function modifier_gladiatrix_war_fury_buff:GetModifierPreAttack_BonusDamage()
-	if IsServer() and not CustomNetTables:GetTableValue( "syncing_purposes", "war_fury_bonus_damage").value then
-		SendClientSync("war_fury_bonus_damage", self.bonusDamage)
-	end
 	self.bonusDamage = self.bonusDamage or CustomNetTables:GetTableValue( "syncing_purposes", "war_fury_bonus_damage").value
 	return self.bonusDamage
 end

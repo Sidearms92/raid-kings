@@ -15,38 +15,44 @@
 		</Panel>
 		<Panel class="MainSelectionInfoContainer" id="GameHudMainSelectionInfo" hittest="false">
 			<Panel id="MainSelectionHeroPortraitContainer" hittest="false">
-				<DOTAScenePanel id="MainSelectionHeroPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" antialias="true" onactivate="SetLocalCameraTarget()"/>
+				<Panel id="MainSelectionHeroPortraitHolder">
+					<Image src="file://{images}/custom_game/UIBorder.png" id="HeroPortraitBorder" hittest="false"/>
+					<DOTAScenePanel id="MainSelectionHeroPortrait" unit="npc_dota_hero_pudge" environment="default" particleonly="false" antialias="true" onactivate="SetLocalCameraTarget()"/>
+					<Panel id="MainSelectionLevelContainer">
+						<Label id="MainSelectionLevelContainerLabel" text="80"/>
+					</Panel>
+				</Panel>
 				<Panel class="AttributeContainer" id="MainSelectionStatsContainer">
-					<Panel class="StatContainer">
+					<Panel class="StatContainer" id="StatsDamageContainer" onmouseout="DOTAHideTitleTextTooltip()">
 						<Image src="s2r://panorama/images/hud/reborn/icon_damage_psd.vtex" id="StatsDamage" class="StatsImage" hittest="false"/>
 						<Label class="StatsText" id="StatsDamageLabel" text="300" hittest="false"/>
 					</Panel>
-					<Panel class="StatContainer">
+					<Panel class="StatContainer" id="StatsArmorContainer" onmouseout="DOTAHideTitleTextTooltip()">
 						<Image src="s2r://panorama/images/hud/reborn/icon_armor_psd.vtex" id="StatsArmor" class="StatsImage" hittest="false"/>
 						<Label class="StatsText" id="StatsArmorLabel" text="20" hittest="false"/>
 					</Panel>
-					<Panel class="StatContainer">
+					<Panel class="StatContainer" id="StatsSpeedContainer" onmouseout="DOTAHideTitleTextTooltip()">
 						<Image src="s2r://panorama/images/hud/reborn/icon_speed_psd.vtex" id="StatsSpeed" class="StatsImage" hittest="false"/>
 						<Label class="StatsText"  id="StatsSpeedLabel" text="300" hittest="false"/>
 					</Panel>
 					<Panel id="HeroStatsContainer">
-						<Panel class="StatContainer">
+						<Panel class="StatContainer" id="StatsStrengthContainer" onmouseout="DOTAHideTitleTextTooltip()">
 							<Image src="file://{images}/custom_game/strength.png" id="StatsStrength" class="StatsImage" hittest="false"/>
 							<Label class="StatsText" id="StatsStrengthLabel" text="5000" hittest="false"/>
 						</Panel>
-						<Panel class="StatContainer">
+						<Panel class="StatContainer" id="StatsAgilityContainer" onmouseout="DOTAHideTitleTextTooltip()">
 							<Image src="file://{images}/custom_game/agility.png" id="StatsAgility" class="StatsImage" hittest="false"/>
 							<Label class="StatsText" id="StatsAgilityLabel" text="5000" hittest="false"/>
 						</Panel>
-						<Panel class="StatContainer">
+						<Panel class="StatContainer" id="StatsIntelligenceContainer" onmouseout="DOTAHideTitleTextTooltip()">
 							<Image src="file://{images}/custom_game/intelligence.png" id="StatsIntelligence" class="StatsImage" hittest="false"/>
 							<Label class="StatsText" id="StatsIntelligenceLabel" text="5000" hittest="false"/>
 						</Panel>
-						<Panel class="StatContainer">
+						<Panel class="StatContainer" id="StatsLuckContainer" onmouseout="DOTAHideTitleTextTooltip()">
 							<Image src="file://{images}/custom_game/luck.png" id="StatsLuck" class="StatsImage" hittest="false"/>
 							<Label class="StatsText" id="StatsLuckLabel" text="5000" hittest="false"/>
 						</Panel>
-						<Panel class="StatContainer">
+						<Panel class="StatContainer" id="StatsVitalityContainer" onmouseout="DOTAHideTitleTextTooltip()">
 							<Image src="file://{images}/custom_game/vitality.png" id="StatsVitality" class="StatsImage" hittest="false"/>
 							<Label class="StatsText" id="StatsVitalityLabel" text="5000" hittest="false"/>
 						</Panel>
@@ -54,10 +60,14 @@
 				</Panel>
 				<Panel id="MainSelectionCurrentStateContainer">
 					<Panel id="MainSelectionResourceHolder">
-						<ProgressBar id="MainSelectionHealthBar">
+						<Panel id="MainSelectionHealthBarContainer">
+							<Panel id="MainSelectionHealthBarPanelContainer">
+								<ProgressBar class="ProgressPanelHealth" id="MainSelectionHealthBar"/>
+								<ProgressBar class="ProgressPanelHealth" id="MainSelectionHealthBarHeal"/>
+							</Panel>
 							<Label class="MainLabel" id="HealthLabel" text="5000000000/5000000000"/>
 							<Label class="RegenLabel" id="HealthRegenLabel" text="+50"/>
-						</ProgressBar>
+						</Panel>
 						<ProgressBar id="MainSelectionManaBar">
 							<Label class="MainLabel" id="ManaLabel" text="5000000000/5000000000"/>
 							<Label class="RegenLabel" id="ManaRegenLabel" text="+50"/>
@@ -75,6 +85,139 @@
 		</Panel>
 		<Panel id="MainSelectionAbilityContainer">
 			<DOTAAbilityImage id="AbilityBarInnate" abilityname="ifrit_kindled_soul"/>
+		</Panel>
+		<Panel id="HeroInformationContainer" class="InformationPanel">
+			<Button id="CloseInfoPanelBtn" onactivate="OpenInfoHud()">
+				<Image src="s2r://panorama/images/control_icons/x_close_png.vtex" hittest="false"/>
+			</Button> 
+			<Panel id="HeroInformation">
+				<Panel id="PlayerHeroInfoModelContainer" />
+				<Panel class="HeroInfoContainer">
+					<Panel class="AttributeContainer">
+						<Panel class="StatInfoContainer" id="InfoAttackDamageContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_damage_psd.vtex" id="InfoAttackDamage" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoAttackDamageLabel" text="189" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoAttackSpeedContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_attack_speed_psd.vtex" id="InfoAttackSpeed" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoAttackSpeedLabel" text="120" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoAttackRangeContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/attackRangeIcon.png" id="InfoAttackRange" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoAttackRangeLabel" text="150" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoSpeedContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_speed_psd.vtex" id="InfoSpeed" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoSpeedLabel" text="300" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoDamageAmpContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/dampIcon.png" id="InfoDamageAmp" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoDamageAmpLabel" text="0%" hittest="false"/>
+						</Panel>
+					</Panel>
+					<Panel class="AttributeContainer">
+						<Panel class="StatInfoContainer" id="InfoArmorContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_armor_psd.vtex" id="InfoArmor" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoArmorLabel" text="52%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoMagicResistanceContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_magic_resist_psd.vtex" id="InfoMagicResistance" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoMagicResistanceLabel" text="20%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoEvasionContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image  src="file://{images}/custom_game/evasionIcon.png" id="InfoEvasion" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoEvasionLabel" text="30%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoStatusResistanceContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/srIcon.png" id="InfoStatusResistance" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoStatusResistanceLabel" text="30%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoDamageResistanceContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/dRIcon.png" id="InfoDamageResistance" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoDamageResistanceLabel" text="1.7" hittest="false"/>
+						</Panel>
+					</Panel>
+					<Panel class="AttributeContainer">
+						<Panel class="StatInfoContainer" id="InfoSpellAmpContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/ampIcon.png" id="InfoSpellAmp" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoSpellAmpLabel" text="15%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoCooldownReductionContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/cdrIcon.png" id="InfoCooldownReduction" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoCooldownReductionLabel" text="20%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoCastRangeContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/castRangeIcon.png" id="InfoCastRange" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoCastRangeLabel" text="300" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoStatusAmpContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/sampIcon.png" id="InfoStatusAmp" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoStatusAmpLabel" text="25%" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoHealAmpContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="file://{images}/custom_game/hampIcon.png" id="InfoHealAmp" class="InfoImage" hittest="false"/>
+							<Label class="InfoText"  id="InfoHealAmpLabel" text="1.7" hittest="false"/>
+						</Panel>
+					</Panel>
+				</Panel>
+				<Panel class="HeroInfoContainerSub">
+					<Panel class="StatsContainerRight" id="InfoVisionContainer">
+						<Panel class="StatInfoContainer" id="InfoDayVisionContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_sun_psd.vtex" id="InfoDayVision" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoDayVisionLabel" text="1800" hittest="false"/>
+						</Panel>
+						<Panel class="StatInfoContainer" id="InfoNightVisionContainer" onmouseout="DOTAHideTitleTextTooltip()">
+							<Image src="s2r://panorama/images/hud/reborn/icon_moon_psd.vtex" id="InfoNightVision" class="InfoImage" hittest="false"/>
+							<Label class="InfoText" id="InfoNightVisionLabel" text="800" hittest="false"/>
+						</Panel>
+					</Panel>
+				</Panel>
+				<Panel class="AttributeStatsContainer">
+					<Panel class="AttributeStatContainer" id="InfoStrengthContainer" onmouseout="DOTAHideTitleTextTooltip()">
+						<Image src="file://{images}/custom_game/strength.png" id="InfoStrength" class="InfoImage" hittest="false"/>
+						<Label class="InfoText" id="InfoStrengthLabel" text="5000" hittest="false"/>
+					</Panel>
+					<Panel class="AttributeStatContainer" id="InfoAgilityContainer" onmouseout="DOTAHideTitleTextTooltip()">
+						<Image src="file://{images}/custom_game/agility.png" id="InfoAgility" class="InfoImage" hittest="false"/>
+						<Label class="InfoText" id="InfoAgilityLabel" text="5000" hittest="false"/>
+					</Panel>
+					<Panel class="AttributeStatContainer" id="InfoIntelligenceContainer" onmouseout="DOTAHideTitleTextTooltip()">
+						<Image src="file://{images}/custom_game/intelligence.png" id="InfoIntelligence" class="InfoImage" hittest="false"/>
+						<Label class="InfoText" id="InfoIntelligenceLabel" text="5000" hittest="false"/>
+					</Panel>
+					<Panel class="AttributeStatContainer" id="InfoLuckContainer" onmouseout="DOTAHideTitleTextTooltip()">
+						<Image src="file://{images}/custom_game/luck.png" id="InfoLuck" class="InfoImage" hittest="false"/>
+						<Label class="InfoText" id="InfoLuckLabel" text="5000" hittest="false"/>
+					</Panel>
+					<Panel class="AttributeStatContainer" id="InfoVitalityContainer" onmouseout="DOTAHideTitleTextTooltip()">
+						<Image src="file://{images}/custom_game/vitality.png" id="InfoVitality" class="InfoImage" hittest="false"/>
+						<Label class="InfoText" id="InfoVitalityLabel" text="5000" hittest="false"/>
+					</Panel>
+				</Panel>
+			</Panel>
+		</Panel>
+		<Panel id="HeroInventoryPanel" class="InformationPanel">
+				<Panel class="EquipmentUpgradeContainer" id="WeaponUpgradeContainer">
+					<Image src="file://{images}/custom_game/weapon_upgrade_1.png" id="WeaponUpgrade1" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/weapon_upgrade_2.png" id="WeaponUpgrade2" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/weapon_upgrade_3.png" id="WeaponUpgrade3" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/weapon_upgrade_4.png" id="WeaponUpgrade4" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/weapon_upgrade_5.png" id="WeaponUpgrade5" class="EquipmentUpgradeIcon" hittest="true"/>
+				</Panel>
+				<Panel class="EquipmentUpgradeContainer" id="ArmorUpgradeContainer">
+					<Image src="file://{images}/custom_game/armor_upgrade_1.png" id="ArmorUpgrade1" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/armor_upgrade_2.png" id="ArmorUpgrade2" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/armor_upgrade_3.png" id="ArmorUpgrade3" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/armor_upgrade_4.png" id="ArmorUpgrade4" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/armor_upgrade_5.png" id="ArmorUpgrade5" class="EquipmentUpgradeIcon" hittest="true"/>
+				</Panel>
+				<Panel class="EquipmentUpgradeContainer" id="OtherUpgradeContainer">
+					<Image src="file://{images}/custom_game/other_upgrade_1.png" id="OtherUpgrade1" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/other_upgrade_2.png" id="OtherUpgrade2" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/other_upgrade_3.png" id="OtherUpgrade3" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/other_upgrade_4.png" id="OtherUpgrade4" class="EquipmentUpgradeIcon" hittest="true"/>
+					<Image src="file://{images}/custom_game/other_upgrade_5.png" id="OtherUpgrade5" class="EquipmentUpgradeIcon" hittest="true"/>
+				</Panel>
 		</Panel>
     </Panel>
 </root>

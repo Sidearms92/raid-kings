@@ -136,12 +136,6 @@
 			m_flEmitRate = 200.0
 		},
 	]
-	m_Children = 
-	[
-		{
-			m_ChildRef = resource:"particles/guardian_anchor_howl_link_new_arc_d_blade.vpcf"
-		},
-	]
 	m_controlPointConfigurations = 
 	[
 		{

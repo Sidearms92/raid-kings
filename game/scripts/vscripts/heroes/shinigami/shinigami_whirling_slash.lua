@@ -25,13 +25,15 @@ function shinigami_whirling_slash:OnSpellStart()
 	local modifier = caster:AddNewModifier(caster, self, "modifier_shinigami_whirling_slash_stop_movement", {duration = duration})
 	modifier:SetStackCount(bonusDamage)
 	local attackblur = ParticleManager:CreateParticle("particles/heroes/shinigami/shinigami_whirling_slash.vpcf", PATTACH_ABSORIGIN, caster)
-	ParticleManager:SetParticleControlEnt(attackblur, 0, caster, PATTACH_POINT_FOLLOW, "attach_attack1", caster:GetAbsOrigin(), true)
+	--ParticleManager:SetParticleControlEnt(attackblur, 0, caster, PATTACH_POINT, "attach_hitloc", caster:GetAbsOrigin(), true)
+	ParticleManager:SetParticleControl(attackblur, 1, caster:GetAbsOrigin())
 	ParticleManager:ReleaseParticleIndex(attackblur)
 	local alreadyAttacked = {}
+	local ticks = 0
 	Timers:CreateTimer(function()
 		ticks = ticks + 1
-
-		local enemiesInLine = FindUnitsInLine(caster:GetTeamNumber(), caster:GetAbsOrigin(), caster:GetAbsOrigin()+caster:GetForwardVector()*(caster:GetAttackRange()+150), nil, caster:GetAttackRange()/(math.abs(maxRotation/angVel)+1), DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_HERO + DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES)
+		
+		local enemiesInLine = caster:FindEnemyUnitsInLine(caster:GetAbsOrigin(), caster:GetAbsOrigin()+caster:GetForwardVector()*(caster:GetAttackRange()+150), caster:GetAttackRange()/(math.abs(maxRotation/angVel)+1), {flag = DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES})
 		for _, enemy in ipairs(enemiesInLine) do
 			if not alreadyAttacked[enemy:entindex()] then
 				caster:PerformAbilityAttack(enemy, true, self)

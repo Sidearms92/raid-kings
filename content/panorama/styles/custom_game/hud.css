@@ -31,7 +31,7 @@
 {
 	width: 100%;
 	height: 100%;
-	background-color: #565656CC;
+	border: 25px solid #565656CC;
 }
 
 .AbilityBarToggle
@@ -80,11 +80,9 @@
 	border: 1px solid #121212FF;
 }
 
-.AbilityLevelImage{
-	width: 100%;
-	height: 100%;
-	wash-color: #e5c100FF;
-	border: 3px solid #eeb70cFF;
+.AbilityCanBeLeveled{
+	wash-color: #FFCC00;
+	border: 2px solid #FFCC00;
 }
 
 .AbilityHotkeyFlair{
@@ -122,7 +120,7 @@
 	font-size: 16px;
 	font-family: "Radiance";
 	text-align: center;
-	text-shadow: 2px 2px 9px 3 #00000000;
+	text-shadow: 2px 2px 2px 3 #000000AA;
 }
 
 /*SELECTION INFO*/
@@ -136,8 +134,39 @@
 
 #MainSelectionHeroPortrait {
 	width: 178px;
-	height: 100%;
+	height: 260px;
 	opacity-mask: url( "file://{images}/custom_game/portraitmask.tga" );
+}
+
+#HeroPortraitBorder {
+	width: 178px;
+	height: 178px;
+	z-index: 10;
+}
+
+#MainSelectionLevelContainer
+{
+	vertical-align: center;
+	horizontal-align: right;
+	background-color: #565656FF;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	margin-top: 50px;
+	margin-right: 10px;
+}
+
+#MainSelectionLevelContainerLabel
+{
+	vertical-align: center;
+	horizontal-align: center;
+	color: #FFFFFF;
+	font-size: 20px;
+	font-family: "Radiance";
+	text-align: center;
+	text-shadow: 2px 2px 9px 3 #00000000;
+	margin-top: 3px;
+	margin-right: 4px;
 }
 
 #MainSelectionHeroPortraitContainer {
@@ -187,16 +216,29 @@
 	padding: 2px;
 }
 
-#MainSelectionHealthBar {
-	border-radius: 5px;
+#MainSelectionHealthBarContainer
+{
 	width: 100%;
 	height: 50%;
+}
+
+#MainSelectionHealthBarPanelContainer
+{
+	flow-children: right;
+	border-radius: 5px;
+	width: 100%;
+	height: 100%;
 	border: 3px solid #881111FF;
+}
+
+.ProgressPanelHealth
+{
+	width: 100%;
+	height: 100%;
 }
 
 #MainSelectionHealthBar_Left
 {
-  /*background-color: gradient( linear, 0% 0%, 0% 100%, from( #326114 ), color-stop( 0.3, #54BA07 ), color-stop( .5, #54BA07 ), to( #326114 ) );*/
   background-color: gradient( linear, 0% 100%, 0% 0%, from( #991111FF ), color-stop( .4, #CD2626FF), color-stop( .6, #CD2626FF), to( #991111FF ) );
   box-shadow: inset #000 1px 1px 3px 3px;
   border-radius: 2px;
@@ -204,7 +246,19 @@
 
 #MainSelectionHealthBar_Right
 {
-  background-color: gradient( linear, 0% 0%, 100% 0%, from( #222222FF ), to( black ) );
+  background-color: gradient( linear, 0% 100%, 0% 0%, from( #c17070FF ), color-stop( .4, #e69292FF), color-stop( .6, #e69292FF), to( #c17070FF ) );
+}
+
+#MainSelectionHealthBarHeal_Left
+{
+  background-color: gradient( linear, 0% 100%, 0% 0%, from( #119011FF ), color-stop( .4, #0B640BFF), color-stop( .6, #0B640BFF), to( #119011FF ) );
+  box-shadow: inset #000 1px 1px 3px 3px;
+  border-radius: 2px;
+}
+
+#MainSelectionHealthBarHeal_Right
+{
+  background-color: gradient( linear, 0% 100%, 0% 0%, from( #191919FF ), color-stop( .4, #020202FF), color-stop( .6, #020202FF ), to( #191919FF ) );
 }
 
 #MainSelectionManaBar {
@@ -236,7 +290,8 @@
 .AttributeContainer{
 	flow-children: down;
 	margin-top: 5px;
-	margin-right: 2px;
+	margin-right: 5px;
+	margin-left: 5px;
 }
 
 .StatContainer
@@ -275,6 +330,7 @@
 	text-align: center;
 	text-shadow: 2px 2px 9px 3 #00000000;
 	margin-top: 1px;
+	z-index: 5;
 }
 
 .RegenLabel
@@ -338,6 +394,14 @@
 .TeamHidden
 {
     transform: translate3d( -225px, 0px, 0px );
+}
+
+.Hidden
+{
+	opacity: 0.0;
+	transform: translateY( 200px );
+	pre-transform-scale2d: 0.95;
+	wash-color: #33CCCC;
 }
 
 .PlayerInfoContainerHolder {
@@ -426,17 +490,19 @@
 
 .PlayerInfoHealth
 {
-	background-color: gradient( linear, 0% 100%, 0% 0%, from( #800000FF ), color-stop( .5, #e60000FF), color-stop( .5, #e60000FF), to( #800000FF ) );
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #991111FF ), color-stop( .4, #CD2626FF), color-stop( .6, #CD2626FF), to( #991111FF ) );
 	height: fill-parent-flow( 1 );
 	width: 100%;
+	border: 3px solid #881111FF;
 }
 
 
 .PlayerInfoMana{
-	background-color: gradient( linear, 0% 100%, 0% 0%, from( #2b60a1FF ), color-stop( .5, #75a2daFF), color-stop( .5, #75a2daFF), to( #2b60a1FF ) );
+	background-color: gradient( linear, 0% 100%, 0% 0%, from( #1c4875FF ), color-stop( .4, #26619cFF), color-stop( .6, #26619cFF), to( #1c4875FF ) );
 	vertical-align: middle;
 	height: fill-parent-flow( 1 );
 	width: 100%;
+	border: 3px solid #354456FF;
 }
 
 .PlayerInfoContainerClose
@@ -459,4 +525,152 @@
 	width: 35px;
 	height: 35px;
 	wash-color: #464646;
+}
+
+#HeroInformationContainer
+{
+	vertical-align: top;
+	horizontal-align: middle;
+	margin-top: 50px;
+	flow-children: down;
+	padding: 20px;
+}
+
+#HeroInventoryPanel
+{
+	vertical-align: top;
+	horizontal-align: middle;
+	margin-top: 50px;
+	flow-children: down;
+	padding: 20px;
+}
+
+.InformationPanel
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #2d2d2d99 ), to( #2d2d2d99 ) );
+	border: 2px solid #121212FF;
+	
+	transition-property: opacity, transform, pre-transform-scale2d, wash-color;
+	transition-duration: 0.4s;
+	transition-delay: 0.0s;
+	transition-timing-function: ease-in-out;
+}
+
+#HeroInformation
+{
+	flow-children: down;
+	padding: 20px;
+}
+
+.HeroInfoContainer
+{
+	horizontal-align: center;
+	flow-children: right;
+}
+
+.HeroInfoContainerSub
+{
+	horizontal-align: center;
+	flow-children: down;
+}
+
+
+.InfoImage
+{
+	width: 32px;
+	height: 32px;
+	margin: 2px;
+}
+
+.InfoText
+{
+	vertical-align: center;
+	horizontal-align: left;
+	color: #FFFFFF;
+	font-size: 18px;
+	font-family: "Radiance";
+	text-align: center;
+	text-shadow: 2px 2px 9px 3 #00000000;
+	margin-top: 1px;
+	margin-left: 1px;
+}
+
+.StatInfoContainer
+{
+	horizontal-align: center;
+	flow-children: right;
+	margin-bottom: 1px;
+	margin-left: 2px;
+	margin-right: 2px;
+	width: 100px;
+}
+
+.StatsContainerRight
+{
+	horizontal-align: center;
+	flow-children: right;
+}
+
+.AttributeStatContainer
+{
+	flow-children: right;
+	margin: 4px;
+}
+
+#InfoVisionContainer
+{
+	margin-top: 15px;
+}
+
+.AttributeStatsContainer
+{
+	vertical-align: bottom;
+	horizontal-align: center;
+	margin-bottom: 30px;
+	flow-children: right;
+}
+
+.HeroInfoScenePanel
+{
+	width: 400px;
+	height: 300px;
+	opacity-mask: url( "file://{images}/custom_game/landscape.tga" );
+	horizontal-align: middle;
+	vertical-align: top;
+}
+
+#CloseInfoPanelBtn
+{
+	margin: 2px;
+	vertical-align: top;
+	horizontal-align: right;
+	width: 32px;
+	height: 32px;
+	background-color: #AA080888;
+	border: 2px solid #56030388;
+	z-index: 50;
+}
+
+#HeroInventory
+{
+	background-color: gradient( linear, 0% 0%, 0% 100%, from( #2d2d2d ), to( #2d2d2d ) );
+}
+
+.EquipmentUpgradeContainer
+{
+	flow-children: right;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.EquipmentUpgradeIcon
+{
+	width: 64px;
+	height: 64px;
+	margin: 8px;
+}
+
+.CurrentUpgrade
+{
+	border: 2px solid #565656FF;
 }

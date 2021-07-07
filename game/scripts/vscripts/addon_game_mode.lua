@@ -27,12 +27,39 @@ require("libraries/animations")
 require("hero_selection")
 require("skill_selection")
 require("statsmanager")
+require("itemmanager")
 
 -- require("relics/relic")
 -- require("relics/relicpool")
 
 -- Precache resources
 function Precache( context )
+	PrecacheResource( "particle", "particles/generic_dazed_side.vpcf", context )
+	PrecacheResource( "particle", "particles/items_fx/courier_shield.vpcf", context )
+	PrecacheResource( "particle", "particles/units/heroes/hero_skeletonking/wraith_king_vampiric_aura_lifesteal.vpcf", context )
+	PrecacheResource( "particle", "particles/generic_gameplay/generic_slowed_cold.vpcf", context )
+	PrecacheResource( "particle", "particles/status_fx/status_effect_frost_armor.vpcf", context )
+	PrecacheResource( "particle", "particles/units/heroes/hero_crystalmaiden/maiden_frostbite_buff.vpcf", context )
+	
+	for hero, activated in pairs( LoadKeyValues("scripts/npc/activelist.txt") ) do
+		PrecacheUnitByNameSync(hero, context)
+	end
+	
+	for abName, content in pairs( LoadKeyValues("scripts/npc/npc_abilities_custom.txt") ) do
+		if content["precache"] then
+			for resourceType, resourcePath in pairs( content["precache"] ) do
+				PrecacheResource( resourceType, resourcePath, context )
+			end
+		end
+	end
+	
+	for model, particleTable in pairs( LoadKeyValues("scripts/keyvalues/cosmetics.kv") ) do
+		for particleType, typeTable in pairs(particleTable) do
+			for _, particle in pairs(typeTable) do
+				PrecacheResource( "particle", particle, context )
+			end
+		end
+	end
 end
 
 -- Actually make the game mode when we activate
@@ -56,6 +83,8 @@ function CRaidKings:InitGameMode()
 	MergeTables(GameRules.AbilityKV, LoadKeyValues("scripts/npc/npc_items_custom.txt"))
 	
 	GameRules.HeroList = LoadKeyValues("scripts/npc/activelist.txt")
+	
+	GameRules.CosmeticsList = LoadKeyValues("scripts/keyvalues/cosmetics.kv")
 	print(GetMapName())
 	local heroList = {}
 	for k,v in pairs(GameRules.HeroList) do
@@ -197,14 +226,111 @@ function CRaidKings:InitGameMode()
 	GameRules:GetGameModeEntity():SetMaximumAttackSpeed(MAXIMUM_ATTACK_SPEED)
 	GameRules:GetGameModeEntity():SetMinimumAttackSpeed(MINIMUM_ATTACK_SPEED)
 	
+	self:InitGenericModifiers()
+	
 	HeroSelection:StartHeroSelection()
 	
 	ListenToGameEvent("dota_player_pick_hero", Dynamic_Wrap( CRaidKings, "OnHeroPick"), CRaidKings )
+	GameRules:GetGameModeEntity():SetExecuteOrderFilter( Dynamic_Wrap(CRaidKings, "FilterOrders"), CRaidKings )
+	GameRules:GetGameModeEntity():SetModifierGainedFilter( Dynamic_Wrap(CRaidKings, "FilterModifiers"), CRaidKings )
+	
+	GameRules:GetGameModeEntity():SetThink( "OnGameThink", self, 0.25 ) 
+	GameRules:GetGameModeEntity():SetCameraDistanceOverride(600)
+end
+
+function CRaidKings:OnGameThink()
+end
+
+function CRaidKings:FilterOrders(event)
+	if event.order_type == DOTA_UNIT_ORDER_PURCHASE_ITEM then return nil end
+	for _, heroID in pairs(event.units) do
+		local hero = EntIndexToHScript( heroID )
+		if hero and hero:IsRealHero() and not hero.hasSkillsSelected then
+			return nil
+		end
+	end
+	return true
+end
+
+function CRaidKings:FilterModifiers( filterTable )
+	local parent_index = filterTable["entindex_parent_const"]
+    local caster_index = filterTable["entindex_caster_const"]
+	local ability_index = filterTable["entindex_ability_const"]
+    if not parent_index or not caster_index or not ability_index then
+        return true
+    end
+	local duration = filterTable["duration"]
+    local parent = EntIndexToHScript( parent_index )
+    local caster = EntIndexToHScript( caster_index )
+	local ability = EntIndexToHScript( ability_index )
+	local name = filterTable["name_const"]
+
+	if parent == caster or not caster or not ability or duration == -1 then return true end
+	
+	local parentBuffIncrease = 1
+	local parentDebuffIncrease = 0
+	local casterBuffIncrease = 1
+	local casterDebuffIncrease = 1
+	
+	for _, modifier in pairs( parent:FindAllModifiers() ) do
+		if modifier.GetModifierStatusResistance then
+			parentDebuffIncrease = parentDebuffIncrease + (1 - parentDebuffIncrease) * (modifier:GetModifierStatusResistance() / 100)
+			parentBuffIncrease = parentBuffIncrease + (modifier:GetModifierStatusResistance() / 100)
+		end
+	end
+	for _, modifier in ipairs( caster:FindAllModifiers() ) do
+		if modifier.GetModifierStatusAmplification then
+			casterBuffIncrease = casterBuffIncrease + (modifier:GetModifierStatusAmplification() / 100)
+			casterDebuffIncrease = casterDebuffIncrease + (modifier:GetModifierStatusAmplification() / 100)
+		end
+	end
+	Timers:CreateTimer(0,function()
+		if parent and not parent:IsNull() then
+			local modifier = parent:FindModifierByNameAndCaster(name, caster)
+			if modifier and not modifier:IsNull() then
+				if modifier.IsDebuff or parent:GetTeam() ~= caster:GetTeam() and (parentDebuffIncrease < 1 or casterDebuffIncrease > 1) then
+					local duration = modifier:GetRemainingTime()
+					modifier:SetDuration(duration * math.max(0, (1 - parentDebuffIncrease) * casterDebuffIncrease), true)
+				elseif modifier.IsBuff or parent:GetTeam() == caster:GetTeam() and (parentBuffIncrease > 1 or casterBuffIncrease > 1) then
+					local duration = modifier:GetRemainingTime()
+					modifier:SetDuration(duration * math.max(0, parentBuffIncrease * casterBuffIncrease), true)
+				end
+			end
+		end
+	end)
+	return true
+end
+
+function CRaidKings:InitGenericModifiers()
+	LinkLuaModifier( "modifier_dazed_generic", "libraries/modifiers/modifier_dazed_generic.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_generic_barrier", "libraries/modifiers/modifier_generic_barrier.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_stunned_generic", "libraries/modifiers/modifier_stunned_generic.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_invisibility_custom", "libraries/modifiers/modifier_invisibility_custom.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_shadow_clone", "libraries/modifiers/modifier_shadow_clone.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_wearable", "libraries/modifiers/modifier_wearable.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_chill_generic", "libraries/modifiers/modifier_chill_generic.lua" ,LUA_MODIFIER_MOTION_NONE )
+	LinkLuaModifier( "modifier_frozen_generic", "libraries/modifiers/modifier_frozen_generic.lua" ,LUA_MODIFIER_MOTION_NONE )
 end
 
 function CRaidKings:OnHeroPick(event)
+	if not event.heroindex then return end
 	local hero = EntIndexToHScript(event.heroindex)
 	if not hero or hero:GetName() == "npc_dota_hero_wisp" then return end
 	print("Hero loaded in: "..hero:GetName())
+	for i = 0, 17 do
+		local skill = hero:GetAbilityByIndex(i)
+		if skill and skill:IsInnateAbility() then
+			skill:SetLevel(1)
+		end
+	end
+	
+	for i=0, 9 do
+		local current_item = hero:GetItemInSlot(i)
+		if current_item	then
+			hero:RemoveItem(current_item)
+		end
+	end
+	
 	StatsManager:CreateCustomStatsForHero(hero)
+	ItemManager(hero, GameRules.UnitKV[hero:GetUnitName()]["Items"])
 end

@@ -67,6 +67,8 @@ function modifier_shinigami_deep_wounds_stacks:OnCreated(kv)
 		ParticleManager:SetParticleControl(self.woundFX, 0, Vector(self:GetStackCount(),0,0))
 		self:AddParticle(self.woundFX, false, false, 0, false, false)
 		ParticleManager:ReleaseParticleIndex(self.woundFX)
+		damage = 0
+		potDamage = 0
 		self:StartIntervalThink(0.1)
 	end
 end
@@ -83,8 +85,6 @@ end
 
 function modifier_shinigami_deep_wounds_stacks:OnIntervalThink()
 	self.internalTime = self.internalTime + 0.1
-	local damage = 0
-	local potDamage = 0
 	if #self.deepWoundsTable > 0 then
 		for i = #self.deepWoundsTable, 1, -1 do	
 			if self.deepWoundsTable[i].expireTime < GameRules:GetGameTime() then
@@ -108,11 +108,19 @@ function modifier_shinigami_deep_wounds_stacks:OnIntervalThink()
 			EmitSoundOn("Ability.SandKing_CausticFinale", self:GetParent())		
 			local boomFX = ParticleManager:CreateParticle("particles/units/heroes/hero_sandking/sandking_caustic_finale_explode.vpcf", PATTACH_POINT_FOLLOW, self:GetParent())		
 			ParticleManager:ReleaseParticleIndex(boomFX)		
-			ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster() or self.owner, damage = potDamage, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})		
+			self:GetAbility():DealDamage(self:GetCaster(), self:GetParent(), potDamage, {}, OVERHEAD_ALERT_DAMAGE)
 			self:Destroy()		
 		else		
-			ApplyDamage({victim = self:GetParent(), attacker = self:GetCaster() or self.owner, damage = damage, damage_type = self:GetAbility():GetAbilityDamageType(), ability = self:GetAbility()})		
+			self:GetAbility():DealDamage(self:GetCaster(), self:GetParent(), damage, {}, OVERHEAD_ALERT_DAMAGE)
 		end		
+	end
+end
+
+function modifier_shinigami_deep_wounds_stacks:GetTotalDamage()
+	if potDamage > self:GetParent():GetMaxHealth() * self.burstHP then	
+		return potDamage*self:GetRemainingTime()
+	else
+		return damage*self:GetRemainingTime()
 	end
 end
 
